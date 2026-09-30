@@ -1,325 +1,384 @@
-# 🤖 SupportCrew AI
+<div align="center">
 
-### Multi-Agent Customer Support & Ticket Resolution System
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=230&section=header&text=SupportCrew%20AI&fontSize=64&fontColor=ffffff&fontAlignY=38&desc=Multi-agent%20customer%20support%20that%20triages%2C%20routes%20and%20resolves&descAlignY=60&descSize=18&animation=fadeIn" alt="SupportCrew AI banner" width="100%"/>
 
-> An AI-powered customer support system built with **CrewAI** that
-> automatically understands, classifies, routes, and resolves customer
-> support tickets using specialized AI agents.
+<a href="https://github.com/Mahee0117/Ticket_resolver_crewai">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1200&color=8B5CF6&center=true&vCenter=true&width=640&lines=Triage+%E2%86%92+Route+%E2%86%92+Resolve;One+ticket.+The+right+specialist.;Built+with+CrewAI+%2B+Pydantic" alt="Typing animation" />
+</a>
+
+<br/>
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![CrewAI](https://img.shields.io/badge/CrewAI-FF5A50?style=for-the-badge)
+![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white)
+![Hugging Face](https://img.shields.io/badge/Hugging_Face-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
+![uv](https://img.shields.io/badge/uv-DE5FE9?style=for-the-badge&logo=uv&logoColor=white)
+
+![Version](https://img.shields.io/badge/version-v1.0-success?style=flat-square)
+![Status](https://img.shields.io/badge/status-actively_developed-blueviolet?style=flat-square)
+![Agents](https://img.shields.io/badge/agents-5-orange?style=flat-square)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)
+
+**[Overview](#-overview)** · **[How it works](#-how-it-works)** · **[Agents](#-meet-the-crew)** · **[Quick start](#-quick-start)** · **[Roadmap](#-roadmap)**
+
+</div>
 
 ---
 
-## 🚀 What is SupportCrew AI?
+## 📌 Overview
 
-Traditional support systems often send every customer request to the
-same support workflow.
+**SupportCrew AI** is an AI-powered customer support system built with **[CrewAI](https://www.crewai.com/)**.
 
-**SupportCrew AI takes a multi-agent approach.**
+A customer ticket comes in. A dedicated **Triage Agent** reads it, figures out *what kind of problem it is* and *how urgent it is*, then hands it to the **specialist agent** best suited to solve it.
 
-A dedicated **Triage Agent** first analyzes the ticket, determines its
-category and priority, and routes it to the appropriate specialist.
+> 💡 **Why multi-agent?** Instead of one general-purpose agent handling every request, each agent has one clear responsibility. Specialists give sharper, more focused answers.
+
+### The questions it answers for every ticket
+
+| ❓ Question | 🎯 Output |
+|---|---|
+| What type of issue is this? | `Billing` · `Account` · `Technical` · `General` |
+| How urgent is it? | `Low` · `Medium` · `High` · `Urgent` |
+| Who should handle it? | The matching specialist agent |
+
+---
+
+## 🧠 How it works
 
 ```mermaid
-flowchart LR
+flowchart TD
+    A([🎫 Customer Ticket]) --> B[🔎 Triage Agent]
+    B --> C{{📦 Structured Triage Result<br/>category · priority · issue}}
+    C --> D{🧭 Category Router}
+    D -->|Billing| E[💳 Billing Agent]
+    D -->|Technical| F[🛠️ Technical Agent]
+    D -->|Account| G[👤 Account Agent]
+    D -->|General| H[💬 General Support Agent]
+    E --> I([✅ Resolution])
+    F --> I
+    G --> I
+    H --> I
 
-    A[🎫 Customer Ticket] --> B[🧠 Triage Agent]
+    style A fill:#8b5cf6,color:#fff,stroke:none
+    style B fill:#6366f1,color:#fff,stroke:none
+    style C fill:#0ea5e9,color:#fff,stroke:none
+    style D fill:#f59e0b,color:#fff,stroke:none
+    style I fill:#22c55e,color:#fff,stroke:none
+```
 
-    B --> C{Category}
+<table>
+<tr>
+<td width="25%" align="center"><h3>1️⃣</h3><b>Ticket arrives</b><br/><sub>A customer describes their problem in plain language</sub></td>
+<td width="25%" align="center"><h3>2️⃣</h3><b>Triage</b><br/><sub>Category, priority and a short issue summary are extracted</sub></td>
+<td width="25%" align="center"><h3>3️⃣</h3><b>Route</b><br/><sub>The category picks exactly one specialist to run</sub></td>
+<td width="25%" align="center"><h3>4️⃣</h3><b>Resolve</b><br/><sub>The specialist writes a customer-friendly resolution</sub></td>
+</tr>
+</table>
 
-    C -->|Billing| D[💳 Billing Agent]
-    C -->|Technical| E[🛠️ Technical Agent]
-    C -->|Account| F[👤 Account Agent]
-    C -->|General| G[💬 General Support Agent]
+### 🎬 Example run
 
-    D --> H[✅ Resolution]
-    E --> H
-    F --> H
-    G --> H
-✨ Current Version — v1.0
-Multi-Agent Triage & Routing
+**Input**
 
-Implemented:
+```text
+The application crashes whenever I try to upload a PDF.
+```
 
-🧠 AI-powered ticket triage
-🏷️ Automatic category classification
-🚦 Priority classification
-🔀 Category-based agent routing
-🤖 Specialized support agents
-📦 Pydantic structured outputs
-🎫 Multiple ticket processing
-💬 Customer-friendly resolutions
-🤖 Agent Architecture
-Agent	Responsibility
-🧠 Triage Agent	Classifies tickets and assigns priority
-💳 Billing Agent	Payments, refunds, duplicate charges & subscriptions
-🛠️ Technical Agent	Bugs, crashes, errors & troubleshooting
-👤 Account Agent	Login, passwords, profiles & account security
-💬 General Support Agent	General questions & information requests
-🔄 How It Works
-1️⃣ Customer submits a ticket
-"The application crashes whenever I try to upload a PDF."
-2️⃣ Triage Agent analyzes it
+**Triage output**
+
+```text
 Category : Technical
 Priority : High
-Issue    : Application crashes during PDF upload
-3️⃣ Router selects the specialist
-Technical
-    ↓
-Technical Agent
-    ↓
-Technical Task
-    ↓
-Resolution
+Issue    : The application crashes whenever I try to upload a PDF.
+```
 
-Only the relevant specialist agent is executed.
+**Routing**
 
-🧠 Structured Triage
+```text
+Technical  ──▶  Technical Agent  ──▶  Technical Task  ──▶  Resolution
+```
 
-Instead of relying on unstructured AI text, the triage result is
-represented using Pydantic:
+<!--
+📸 Add a terminal screenshot or GIF of a real run here, for example:
+<p align="center"><img src="docs/demo.gif" alt="SupportCrew AI demo" width="80%"/></p>
+-->
 
+---
+
+## 🦸 Meet the crew
+
+<table>
+<tr>
+<td width="20%" align="center"><h1>🔎</h1><b>Triage Agent</b><br/><sub><i>Senior Customer Support Triage Specialist</i></sub></td>
+<td>
+Classifies the ticket, assigns a priority, summarises the issue and routes it to the right specialist.<br/><br/>
+<b>Categories:</b> <code>Billing</code> <code>Account</code> <code>Technical</code> <code>General</code><br/>
+<b>Priorities:</b> <code>Low</code> <code>Medium</code> <code>High</code> <code>Urgent</code>
+</td>
+</tr>
+<tr>
+<td align="center"><h1>💳</h1><b>Billing Agent</b></td>
+<td>Payments · Refunds · Duplicate charges · Subscriptions · Billing problems</td>
+</tr>
+<tr>
+<td align="center"><h1>🛠️</h1><b>Technical Agent</b></td>
+<td>Application crashes · Bugs · Errors · Technical failures · Troubleshooting</td>
+</tr>
+<tr>
+<td align="center"><h1>👤</h1><b>Account Agent</b></td>
+<td>Login problems · Password issues · Account access · Profile problems · Account security</td>
+</tr>
+<tr>
+<td align="center"><h1>💬</h1><b>General Support Agent</b></td>
+<td>General questions · Information requests · How-to questions · Basic customer assistance</td>
+</tr>
+</table>
+
+---
+
+## ✨ Features (v1.0)
+
+- 🤖 **Multi-agent architecture** – specialised CrewAI agents instead of one do-everything agent
+- 🧠 **Intelligent triage** – every ticket is classified into Billing, Account, Technical or General
+- 🚦 **Priority classification** – Low, Medium, High or Urgent
+- 📦 **Structured output** – triage results are validated with a Pydantic model
+- 🧭 **Dynamic routing** – the triage category decides which specialist runs, and only that one
+- 🔁 **Batch processing** – handle multiple tickets through a Python processing loop
+
+```python
 class TriageResult(BaseModel):
     category: str
     priority: str
     issue: str
+```
 
-This allows the application to make deterministic routing decisions
-from the AI's output.
+---
 
-                 Triage Result
-                      │
-          ┌───────────┼───────────┐
-          ↓           ↓           ↓
-       Category    Priority      Issue
-          │
-          ↓
-        Router
-🛠️ Tech Stack
-Technology	Purpose
-🐍 Python	Core application
-🤖 CrewAI	Multi-agent orchestration
-🧩 Pydantic	Structured agent outputs
-🤗 Hugging Face	LLM inference
-📦 uv	Python environment & dependency management
-🔐 python-dotenv	Environment configuration
-📂 Project Structure
-supportcrew-ai/
+## 🛠️ Tech stack
+
+| Layer | Tools |
+|---|---|
+| 🐍 Language | Python |
+| 🤝 Agent framework | CrewAI |
+| ✅ Data validation | Pydantic |
+| 🧠 LLM access | Hugging Face Inference Providers (OpenAI-compatible API) |
+| 📦 Packaging | uv |
+| 🔐 Config | python-dotenv |
+
+---
+
+## 📁 Project structure
+
+```text
+Ticket_resolver_crewai/
 │
 ├── src/
 │   └── supportcrew_ai/
 │       ├── __init__.py
 │       └── main.py
 │
+├── .env                # local secrets (never commit this)
 ├── .gitignore
 ├── .python-version
 ├── pyproject.toml
 ├── uv.lock
 └── README.md
-🚀 Getting Started
-1. Clone the repository
+```
+
+> ⚠️ `.env` is excluded from version control. Never commit real credentials to GitHub.
+
+---
+
+## 🚀 Quick start
+
+**1. Clone the repository**
+
+```bash
 git clone https://github.com/Mahee0117/Ticket_resolver_crewai.git
-
 cd Ticket_resolver_crewai
-2. Install dependencies
+```
+
+**2. Install dependencies**
+
+```bash
 uv sync
-3. Configure environment variables
+```
 
-Create a .env file:
+**3. Add your environment variables**
 
+Create a `.env` file in the project root:
+
+```env
 HF_TOKEN=your_huggingface_token
+```
 
-⚠️ Never commit your .env file or API keys to GitHub.
+**4. Run it**
 
-4. Run
+```bash
 uv run python src/supportcrew_ai/main.py
-🧪 Example
-Input
-Someone has gained unauthorized access to my account
-and I can see transactions that I did not make.
-Triage
-Category : Account
-Priority : Urgent
-Routing
-Account
-   ↓
-Account Agent
-   ↓
-Security Analysis
-   ↓
-Resolution
-📈 Development Roadmap
-✅ v1.0 — Multi-Agent Routing
+```
 
-Completed
+---
 
-Ticket
-  ↓
-Triage
-  ↓
-Structured Output
-  ↓
-Routing
-  ↓
-Specialist
-  ↓
-Resolution
-🔜 v2.0 — QA & Validation
+## 🗺️ Roadmap
 
-Planned
+SupportCrew AI is built **incrementally**. Each version adds one new agentic capability.
 
-Add a dedicated QA Agent to review specialist responses.
+| Version | Milestone | Status |
+|:---:|---|:---:|
+| **v1.0** | Multi-agent triage and routing | ✅ **Done** |
+| **v2.0** | QA Agent for resolution validation | 🗓️ Planned |
+| **v3.0** | Human escalation | 🗓️ Planned |
+| **v4.0** | Agent tools (real support data) | 🗓️ Planned |
+| **v5.0** | RAG knowledge base | 🗓️ Planned |
+| **v6.0** | CrewAI Flow orchestration | 🗓️ Planned |
+| **v7.0** | Production application | 🗓️ Planned |
 
-Specialist
-    ↓
-Resolution
-    ↓
-QA Agent
-   ↙   ↘
-PASS   FAIL
- ↓      ↓
-Final  Retry / Escalate
-🔜 v3.0 — Human Escalation
+<details>
+<summary>✅ <b>v1.0 – Multi-Agent Triage &amp; Routing</b> (completed)</summary>
 
-Introduce human-in-the-loop escalation for:
+<br/>
 
-Critical security issues
-Failed resolutions
-Complex customer problems
-Low-confidence responses
-🔜 v4.0 — Tools
+- Triage, Billing, Technical, Account and General Support agents
+- Category and priority classification
+- Pydantic structured output
+- Category-based routing and specialist task execution
+- Multiple ticket processing
 
-Give agents access to real support operations:
+</details>
 
-get_customer()
-get_order()
-get_payment()
-get_account()
-search_logs()
-🔜 v5.0 — RAG Knowledge Base
+<details>
+<summary>🔵 <b>v2.0 – Resolution Validation</b> (planned)</summary>
 
-Allow agents to retrieve information from:
+<br/>
 
-Product documentation
-FAQs
-Refund policies
-Troubleshooting guides
-Internal support documentation
-Ticket
-  ↓
-Specialist Agent
-  ↓
-Knowledge Base
-  ↓
-Relevant Information
-  ↓
-Resolution
-🔜 v6.0 — CrewAI Flow
+A dedicated **QA Agent** reviews every specialist response before it reaches the customer.
 
-Move the overall workflow orchestration into CrewAI Flow.
+```mermaid
+flowchart LR
+    A[Specialist Resolution] --> B[🧪 QA Agent]
+    B -->|PASS| C([✅ Final Response])
+    B -->|FAIL| D([🔁 Retry / Escalate])
+```
 
-                 CrewAI Flow
-                     │
-                   Triage
-                     │
-                   Router
-                ↙    ↓    ↘
-          Billing Technical Account
-                \     |     /
-                 Resolution
-                     │
-                     QA
-🔜 v7.0 — Production Application
+</details>
 
-Future architecture:
+<details>
+<summary>🟣 <b>v3.0 – Human Escalation</b> (planned)</summary>
 
-┌──────────────────┐
-│  React Frontend  │
-└────────┬─────────┘
-         ↓
-┌──────────────────┐
-│  FastAPI Backend │
-└────────┬─────────┘
-         ↓
-┌──────────────────┐
-│   CrewAI Flow    │
-└────────┬─────────┘
-         ↓
-┌──────────────────┐
-│ Agents + Tools   │
-│      + RAG       │
-└────────┬─────────┘
-         ↓
-┌──────────────────┐
-│   PostgreSQL     │
-└──────────────────┘
-🎯 Long-Term Vision
+<br/>
 
-The goal is to evolve SupportCrew AI from a multi-agent routing
-prototype into a complete AI-powered customer support platform.
+Escalate to a human for:
 
-Customer
-   ↓
-Ticket Intake
-   ↓
-Triage
-   ↓
-Priority
-   ↓
-Specialist Routing
-   ↓
-Tools + RAG
-   ↓
-Resolution
-   ↓
-Quality Check
-   ↓
-┌──────────────┐
-│              │
-▼              ▼
-Resolved     Human
-             Escalation
-📚 Development Approach
+- High-risk security issues
+- Complex unresolved tickets
+- Failed QA validation
+- Anything that needs human judgement
 
-This project is being developed incrementally to understand and
-implement agentic AI concepts step by step.
+</details>
 
-Single Agent
-     ↓
-Multi-Agent
-     ↓
-Routing
-     ↓
-Structured Outputs
-     ↓
-QA
-     ↓
-Tools
-     ↓
-RAG
-     ↓
-CrewAI Flow
-     ↓
-Production Application
+<details>
+<summary>🟠 <b>v4.0 – Agent Tools</b> (planned)</summary>
 
-Each version represents a new stage of the system.
+<br/>
 
-👨‍💻 Author
-Mahesh M S K
+Specialists gain tools so they work with real support data instead of only the ticket text:
 
-Computer Science Student | Agentic AI | DevOps | Cloud | Full-Stack
+```python
+get_customer()   get_order()   get_payment()   get_account()   search_logs()
+```
 
-⭐ SupportCrew AI is actively being developed.
+</details>
 
-Current Version: v1.0
+<details>
+<summary>🔴 <b>v5.0 – RAG Knowledge Base</b> (planned)</summary>
 
+<br/>
 
-### Why this will look much better
+Agents retrieve answers from company documentation using Retrieval-Augmented Generation.
 
-Your current README has huge blocks of text like:
+**Potential sources:** FAQ documents · Refund policies · Account recovery docs · Product docs · Troubleshooting guides
+
+```mermaid
+flowchart LR
+    T[🎫 Ticket] --> S[Specialist Agent] --> K[(📚 Knowledge Base)] --> D[Relevant Docs] --> R([✅ Accurate Resolution])
+```
+
+</details>
+
+<details>
+<summary>🟡 <b>v6.0 – CrewAI Flow</b> (planned)</summary>
+
+<br/>
+
+Move routing and orchestration into a structured **CrewAI Flow**: Triage → Router → Specialists → Resolution → QA.
+
+</details>
+
+<details>
+<summary>🚀 <b>v7.0 – Production Application</b> (planned)</summary>
+
+<br/>
+
+```mermaid
+flowchart LR
+    A[⚛️ React Frontend] --> B[⚡ FastAPI Backend] --> C[🤝 CrewAI Workflow] --> D[🧰 Agents + Tools + RAG] --> E[(🐘 PostgreSQL)]
+```
+
+**Potential additions:** Authentication · Ticket database · REST APIs · Docker · Testing · Cloud deployment · Monitoring
+
+</details>
+
+---
+
+## 🔭 Long-term vision
+
+The goal is to grow SupportCrew AI from a multi-agent routing prototype into a complete **AI-powered customer support platform**.
+
+> 🚧 Everything below the v1.0 line is a **plan, not a feature that exists today.**
+
+```mermaid
+flowchart TD
+    A([Customer]) --> B[Ticket Intake] --> C[Triage] --> D[Priority] --> E[Routing]
+    E --> F[Specialist Agent] --> G[Tools + RAG] --> H[Resolution] --> I[🧪 QA Agent]
+    I -->|Approved| J([📨 Customer Response])
+    I -->|Escalate| K([🧑‍💼 Human Support])
+```
+
+---
+
+## 📚 Learning journey
+
+This project doubles as a hands-on way of learning CrewAI, built one layer at a time:
 
 ```text
-Customer Ticket
-      ↓
-Triage Agent
-      ↓
-Structured Triage Result
-...
+Single Agent → Multiple Agents → Routing → Structured Outputs → QA
+      → Tools → RAG → Workflow Orchestration → Full Application
+```
+
+Each version marks a new stage of understanding and implementation.
+
+---
+
+## 👨‍💻 Author
+
+<div align="center">
+
+**Mahesh M S K**
+<br/>
+<sub>Computer Science student · Agentic AI · Multi-Agent Systems · Generative AI · DevOps · Cloud · Full-Stack</sub>
+
+<br/>
+
+[![GitHub](https://img.shields.io/badge/GitHub-Mahee0117-181717?style=for-the-badge&logo=github)](https://github.com/Mahee0117)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/msk-mahesh-98708829a)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-8B5CF6?style=for-the-badge&logo=vercel&logoColor=white)](https://portfolio-nu-sepia-sw11y787dc.vercel.app)
+
+<br/>
+
+**Current version: v1.0** · 🚧 Actively being developed
+
+⭐ *If you find this project interesting, consider giving it a star!*
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=110&section=footer" alt="footer" width="100%"/>
+
+</div>
