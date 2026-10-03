@@ -1,25 +1,27 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=230&section=header&text=SupportCrew%20AI&fontSize=64&fontColor=ffffff&fontAlignY=38&desc=Multi-agent%20customer%20support%20that%20triages%2C%20routes%20and%20resolves&descAlignY=60&descSize=18&animation=fadeIn" alt="SupportCrew AI banner" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=230&section=header&text=SupportCrew%20AI&fontSize=64&fontColor=ffffff&fontAlignY=38&desc=Multi-agent%20support%20with%20a%20QA%20feedback%20loop%20%E2%80%A2%20100%25%20local&descAlignY=60&descSize=18&animation=fadeIn" alt="SupportCrew AI banner" width="100%"/>
 
 <a href="https://github.com/Mahee0117/Ticket_resolver_crewai">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1200&color=8B5CF6&center=true&vCenter=true&width=640&lines=Triage+%E2%86%92+Route+%E2%86%92+Resolve;One+ticket.+The+right+specialist.;Built+with+CrewAI+%2B+Pydantic" alt="Typing animation" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1200&color=8B5CF6&center=true&vCenter=true&width=680&lines=Triage+%E2%86%92+Route+%E2%86%92+Resolve+%E2%86%92+QA;Rejected+answers+get+feedback+and+a+retry;Runs+fully+local+with+Ollama+%2B+Qwen2" alt="Typing animation" />
 </a>
 
 <br/>
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![CrewAI](https://img.shields.io/badge/CrewAI-FF5A50?style=for-the-badge)
+![Ollama](https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=ollama&logoColor=white)
+![Qwen2](https://img.shields.io/badge/Qwen2_7B-615CED?style=for-the-badge)
 ![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white)
-![Hugging Face](https://img.shields.io/badge/Hugging_Face-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
 ![uv](https://img.shields.io/badge/uv-DE5FE9?style=for-the-badge&logo=uv&logoColor=white)
 
-![Version](https://img.shields.io/badge/version-v1.0-success?style=flat-square)
+![Version](https://img.shields.io/badge/version-v2.0-success?style=flat-square)
 ![Status](https://img.shields.io/badge/status-actively_developed-blueviolet?style=flat-square)
-![Agents](https://img.shields.io/badge/agents-5-orange?style=flat-square)
+![Agents](https://img.shields.io/badge/agents-6-orange?style=flat-square)
+![Runs](https://img.shields.io/badge/runs-100%25_local-0ea5e9?style=flat-square)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)
 
-**[Overview](#-overview)** · **[How it works](#-how-it-works)** · **[Agents](#-meet-the-crew)** · **[Quick start](#-quick-start)** · **[Roadmap](#-roadmap)**
+**[Overview](#-overview)** · **[What's new in v2](#-whats-new-in-v2)** · **[How it works](#-how-it-works)** · **[Agents](#-meet-the-crew)** · **[Quick start](#-quick-start)** · **[Roadmap](#-roadmap)**
 
 </div>
 
@@ -27,19 +29,46 @@
 
 ## 📌 Overview
 
-**SupportCrew AI** is an AI-powered customer support system built with **[CrewAI](https://www.crewai.com/)**.
+**SupportCrew AI** is a multi-agent customer support system built with **[CrewAI](https://www.crewai.com/)**.
 
-A customer ticket comes in. A dedicated **Triage Agent** reads it, figures out *what kind of problem it is* and *how urgent it is*, then hands it to the **specialist agent** best suited to solve it.
+A ticket comes in. A **Triage Agent** classifies it and sets its priority. The ticket is routed to the right **specialist agent**, which drafts a customer-friendly response. Then a **QA Agent** reviews that response, and if it isn't good enough, the specialist gets feedback and tries again.
 
-> 💡 **Why multi-agent?** Instead of one general-purpose agent handling every request, each agent has one clear responsibility. Specialists give sharper, more focused answers.
+> 💡 **Why multi-agent?** Each agent has one clear job. Specialists give focused answers, and a separate reviewer catches what the writer missed.
 
-### The questions it answers for every ticket
+---
 
-| ❓ Question | 🎯 Output |
-|---|---|
-| What type of issue is this? | `Billing` · `Account` · `Technical` · `General` |
-| How urgent is it? | `Low` · `Medium` · `High` · `Urgent` |
-| Who should handle it? | The matching specialist agent |
+## 🆕 What's new in v2
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+### 🧪 QA Agent
+A new reviewer checks every specialist response for relevance, correctness and usefulness before it goes out.
+
+</td>
+<td width="33%" valign="top">
+
+### 🔁 Feedback & retry
+Rejected responses go back to the specialist together with the QA feedback, with a **bounded** retry limit.
+
+</td>
+<td width="33%" valign="top">
+
+### 🏠 Fully local
+Moved from Hugging Face to **Ollama + Qwen2 7B**. No API credits or tokens required.
+
+</td>
+</tr>
+</table>
+
+| | **v1** | **v2** |
+|---|---|---|
+| Flow | Ticket → Triage → Specialist → Response | Ticket → Triage → Specialist → **QA** → Final response or **retry** |
+| QA review | ❌ | ✅ structured `QAResult` |
+| Feedback loop | ❌ | ✅ up to 2 retries |
+| LLM | Hugging Face (hosted) | Ollama `qwen2:7b` (local) |
+| Code layout | Single file | Modular: `agents`, `tasks`, `models`, `config`, `router`, `tickets` |
 
 ---
 
@@ -49,53 +78,107 @@ A customer ticket comes in. A dedicated **Triage Agent** reads it, figures out *
 flowchart TD
     A([🎫 Customer Ticket]) --> B[🔎 Triage Agent]
     B --> C{{📦 Structured Triage Result<br/>category · priority · issue}}
-    C --> D{🧭 Category Router}
+    C --> D{🧭 Python Router}
     D -->|Billing| E[💳 Billing Agent]
     D -->|Technical| F[🛠️ Technical Agent]
     D -->|Account| G[👤 Account Agent]
     D -->|General| H[💬 General Support Agent]
-    E --> I([✅ Resolution])
+    E --> I[📝 Customer Response]
     F --> I
     G --> I
     H --> I
+    I --> J[🧪 QA Agent]
+    J -->|✅ APPROVED| K([📨 Final Response])
+    J -->|❌ REJECTED + feedback| L{Retries left?}
+    L -->|Yes| D
+    L -->|No| K
 
     style A fill:#8b5cf6,color:#fff,stroke:none
     style B fill:#6366f1,color:#fff,stroke:none
     style C fill:#0ea5e9,color:#fff,stroke:none
     style D fill:#f59e0b,color:#fff,stroke:none
-    style I fill:#22c55e,color:#fff,stroke:none
+    style J fill:#ec4899,color:#fff,stroke:none
+    style K fill:#22c55e,color:#fff,stroke:none
 ```
 
 <table>
 <tr>
-<td width="25%" align="center"><h3>1️⃣</h3><b>Ticket arrives</b><br/><sub>A customer describes their problem in plain language</sub></td>
-<td width="25%" align="center"><h3>2️⃣</h3><b>Triage</b><br/><sub>Category, priority and a short issue summary are extracted</sub></td>
-<td width="25%" align="center"><h3>3️⃣</h3><b>Route</b><br/><sub>The category picks exactly one specialist to run</sub></td>
-<td width="25%" align="center"><h3>4️⃣</h3><b>Resolve</b><br/><sub>The specialist writes a customer-friendly resolution</sub></td>
+<td width="20%" align="center"><h3>1️⃣</h3><b>Ticket</b><br/><sub>A customer describes the problem in plain language</sub></td>
+<td width="20%" align="center"><h3>2️⃣</h3><b>Triage</b><br/><sub>Category, priority and issue summary are extracted</sub></td>
+<td width="20%" align="center"><h3>3️⃣</h3><b>Route</b><br/><sub>Plain Python logic picks one specialist, with no extra LLM call</sub></td>
+<td width="20%" align="center"><h3>4️⃣</h3><b>Resolve</b><br/><sub>The specialist drafts a response</sub></td>
+<td width="20%" align="center"><h3>5️⃣</h3><b>QA</b><br/><sub>Approve it, or send it back with feedback</sub></td>
 </tr>
 </table>
 
-### 🎬 Example run
+### 🔁 The QA retry loop
 
-**Input**
+The loop is **bounded** on purpose. An open-ended `while not approved` could run forever, so the system stops after a fixed number of retries.
 
-```text
-The application crashes whenever I try to upload a PDF.
+```python
+MAX_RETRIES = 2   # 1 first attempt + up to 2 retries = max 3 attempts
 ```
 
-**Triage output**
-
-```text
-Category : Technical
-Priority : High
-Issue    : The application crashes whenever I try to upload a PDF.
+```mermaid
+flowchart LR
+    A1[Attempt 1] --> Q1[QA]
+    Q1 -->|Reject| A2[Attempt 2]
+    A2 --> Q2[QA]
+    Q2 -->|Reject| A3[Attempt 3]
+    A3 --> Q3[QA]
+    Q3 -->|Approve or limit reached| Z([Stop])
+    Q1 -->|Approve| Z
+    Q2 -->|Approve| Z
 ```
 
-**Routing**
+On a retry, the specialist receives its **previous response** and the **QA feedback**, then improves the draft:
 
 ```text
-Technical  ──▶  Technical Agent  ──▶  Technical Task  ──▶  Resolution
+PREVIOUS RESPONSE:
+...
+QA FEEDBACK:
+...
+Improve the previous response based on the QA feedback.
 ```
+
+**Illustrative example** of what a rejection could look like:
+
+```text
+QAResult(
+    approved = False,
+    feedback = "Do not assume the customer uses Windows. The response is unnecessarily verbose."
+)
+```
+
+### 📦 Structured outputs
+
+Both the triage and QA agents return validated Pydantic models instead of free text.
+
+```python
+class TriageResult(BaseModel):
+    category: str
+    priority: str
+    issue: str
+
+class QAResult(BaseModel):
+    approved: bool
+    feedback: str
+```
+
+---
+
+## 🧪 Tested tickets
+
+Four tickets ran through the full **Triage → Specialist → QA** pipeline on local Qwen2 7B:
+
+| # | Ticket | Category | Priority | Result |
+|:-:|---|:-:|:-:|:-:|
+| 1 | Password reset problem | Account | Medium | ✅ Approved |
+| 2 | App crashes on PDF upload | Technical | High | ✅ Approved |
+| 3 | Profile picture issue | Account | Low | ✅ Approved |
+| 4 | Unauthorized access and fraudulent transactions | Account | Urgent | ✅ Approved |
+
+> 🔎 **Honest note:** all four responses were approved on the first attempt, so the reject → feedback → retry path is implemented but **not yet demonstrated** in a real run.
 
 <!--
 📸 Add a terminal screenshot or GIF of a real run here, for example:
@@ -110,7 +193,7 @@ Technical  ──▶  Technical Agent  ──▶  Technical Task  ──▶  Res
 <tr>
 <td width="20%" align="center"><h1>🔎</h1><b>Triage Agent</b><br/><sub><i>Senior Customer Support Triage Specialist</i></sub></td>
 <td>
-Classifies the ticket, assigns a priority, summarises the issue and routes it to the right specialist.<br/><br/>
+Classifies the ticket, assigns a priority and summarises the issue.<br/><br/>
 <b>Categories:</b> <code>Billing</code> <code>Account</code> <code>Technical</code> <code>General</code><br/>
 <b>Priorities:</b> <code>Low</code> <code>Medium</code> <code>High</code> <code>Urgent</code>
 </td>
@@ -131,25 +214,31 @@ Classifies the ticket, assigns a priority, summarises the issue and routes it to
 <td align="center"><h1>💬</h1><b>General Support Agent</b></td>
 <td>General questions · Information requests · How-to questions · Basic customer assistance</td>
 </tr>
+<tr>
+<td align="center"><h1>🧪</h1><b>QA Agent</b><br/><sub><i>Customer Support Quality Assurance Specialist</i></sub></td>
+<td>
+Reviews each specialist response and returns a structured verdict.<br/><br/>
+<b>Checks:</b> Does it address the issue? · Is it relevant? · Is it useful? · Does it ignore important information?
+</td>
+</tr>
 </table>
 
 ---
 
-## ✨ Features (v1.0)
+## 🏗️ Architecture
 
-- 🤖 **Multi-agent architecture** – specialised CrewAI agents instead of one do-everything agent
-- 🧠 **Intelligent triage** – every ticket is classified into Billing, Account, Technical or General
-- 🚦 **Priority classification** – Low, Medium, High or Urgent
-- 📦 **Structured output** – triage results are validated with a Pydantic model
-- 🧭 **Dynamic routing** – the triage category decides which specialist runs, and only that one
-- 🔁 **Batch processing** – handle multiple tickets through a Python processing loop
+`main.py` is now a thin **orchestrator**. The work is split into small functions.
 
-```python
-class TriageResult(BaseModel):
-    category: str
-    priority: str
-    issue: str
+```text
+main.py
+│
+├── run_triage()         → creates the triage task + crew, returns TriageResult
+├── run_specialist()     → routes by category, runs the matching specialist
+├── run_quality_check()  → creates the QA task + crew, returns QAResult
+└── main()               → ticket → triage → specialist → QA → retry if needed
 ```
+
+The router (`category → agent`) is **deterministic Python**, not another LLM call.
 
 ---
 
@@ -159,10 +248,10 @@ class TriageResult(BaseModel):
 |---|---|
 | 🐍 Language | Python |
 | 🤝 Agent framework | CrewAI |
+| 🧠 LLM runtime | Ollama |
+| 🤖 Model | `qwen2:7b` (local) |
 | ✅ Data validation | Pydantic |
-| 🧠 LLM access | Hugging Face Inference Providers (OpenAI-compatible API) |
 | 📦 Packaging | uv |
-| 🔐 Config | python-dotenv |
 
 ---
 
@@ -174,9 +263,14 @@ Ticket_resolver_crewai/
 ├── src/
 │   └── supportcrew_ai/
 │       ├── __init__.py
-│       └── main.py
+│       ├── main.py       # orchestration + QA retry loop
+│       ├── config.py     # local Ollama LLM setup
+│       ├── models.py     # TriageResult, QAResult
+│       ├── agents.py     # all six agents
+│       ├── tasks.py      # all tasks, incl. QA task
+│       ├── router.py     # category → specialist
+│       └── tickets.py    # sample tickets
 │
-├── .env                # local secrets (never commit this)
 ├── .gitignore
 ├── .python-version
 ├── pyproject.toml
@@ -184,11 +278,13 @@ Ticket_resolver_crewai/
 └── README.md
 ```
 
-> ⚠️ `.env` is excluded from version control. Never commit real credentials to GitHub.
+> 🧩 Agents and tasks each live in a single file on purpose. At this size, one file per agent would be needless fragmentation.
 
 ---
 
 ## 🚀 Quick start
+
+**Prerequisites:** [uv](https://docs.astral.sh/uv/) and [Ollama](https://ollama.com/)
 
 **1. Clone the repository**
 
@@ -203,19 +299,40 @@ cd Ticket_resolver_crewai
 uv sync
 ```
 
-**3. Add your environment variables**
+**3. Pull the local model and make sure Ollama is running**
 
-Create a `.env` file in the project root:
-
-```env
-HF_TOKEN=your_huggingface_token
+```bash
+ollama pull qwen2:7b
 ```
+
+Ollama serves on `http://localhost:11434` by default.
 
 **4. Run it**
 
 ```bash
 uv run python src/supportcrew_ai/main.py
 ```
+
+> ✅ No API keys needed. v2 runs entirely on your machine.
+
+**Using a different model?** Change the model in `config.py`:
+
+```python
+llm = LLM(
+    model="ollama/qwen2:7b",
+    base_url="http://localhost:11434",
+)
+```
+
+---
+
+## ⚠️ Known limitations
+
+- **Verbose answers.** Qwen2 7B sometimes writes long, speculative troubleshooting for simple tickets. For example, the PDF crash ticket got a far more extensive reply than it needed.
+- **Retry path untested in practice.** QA approved everything on the first attempt in the latest run.
+- **Lenient QA.** The review criteria are basic and can be tightened (conciseness, less speculation).
+
+These are planned improvements, not blockers for v2.
 
 ---
 
@@ -226,15 +343,13 @@ SupportCrew AI is built **incrementally**. Each version adds one new agentic cap
 | Version | Milestone | Status |
 |:---:|---|:---:|
 | **v1.0** | Multi-agent triage and routing | ✅ **Done** |
-| **v2.0** | QA Agent for resolution validation | 🗓️ Planned |
-| **v3.0** | Human escalation | 🗓️ Planned |
-| **v4.0** | Agent tools (real support data) | 🗓️ Planned |
-| **v5.0** | RAG knowledge base | 🗓️ Planned |
-| **v6.0** | CrewAI Flow orchestration | 🗓️ Planned |
-| **v7.0** | Production application | 🗓️ Planned |
+| **v2.0** | QA Agent + feedback retry loop + local Ollama | ✅ **Done** |
+| **v3.0** | Tools + knowledge base (RAG) | 🗓️ Planned |
+| **v4.0** | CrewAI Flow + human escalation | 🗓️ Planned |
+| **v5.0** | FastAPI + PostgreSQL + React | 🗓️ Planned |
 
 <details>
-<summary>✅ <b>v1.0 – Multi-Agent Triage &amp; Routing</b> (completed)</summary>
+<summary>✅ <b>v1.0: Multi-Agent Triage &amp; Routing</b> (completed)</summary>
 
 <br/>
 
@@ -247,56 +362,30 @@ SupportCrew AI is built **incrementally**. Each version adds one new agentic cap
 </details>
 
 <details>
-<summary>🔵 <b>v2.0 – Resolution Validation</b> (planned)</summary>
+<summary>✅ <b>v2.0: QA &amp; Feedback Retry</b> (completed)</summary>
 
 <br/>
 
-A dedicated **QA Agent** reviews every specialist response before it reaches the customer.
-
-```mermaid
-flowchart LR
-    A[Specialist Resolution] --> B[🧪 QA Agent]
-    B -->|PASS| C([✅ Final Response])
-    B -->|FAIL| D([🔁 Retry / Escalate])
-```
+- QA Agent with structured `QAResult` (`approved`, `feedback`)
+- Specialist tasks accept `previous_response` and `qa_feedback`
+- Bounded retry loop (`MAX_RETRIES = 2`)
+- Modular code: `run_triage()`, `run_specialist()`, `run_quality_check()`
+- Switched to local Ollama (`qwen2:7b`), no hosted API needed
 
 </details>
 
 <details>
-<summary>🟣 <b>v3.0 – Human Escalation</b> (planned)</summary>
+<summary>🟠 <b>v3.0: Tools &amp; Knowledge Base</b> (planned)</summary>
 
 <br/>
 
-Escalate to a human for:
-
-- High-risk security issues
-- Complex unresolved tickets
-- Failed QA validation
-- Anything that needs human judgement
-
-</details>
-
-<details>
-<summary>🟠 <b>v4.0 – Agent Tools</b> (planned)</summary>
-
-<br/>
-
-Specialists gain tools so they work with real support data instead of only the ticket text:
+Specialists gain tools and can look things up in company documentation, so they work with real data instead of only the ticket text.
 
 ```python
 get_customer()   get_order()   get_payment()   get_account()   search_logs()
 ```
 
-</details>
-
-<details>
-<summary>🔴 <b>v5.0 – RAG Knowledge Base</b> (planned)</summary>
-
-<br/>
-
-Agents retrieve answers from company documentation using Retrieval-Augmented Generation.
-
-**Potential sources:** FAQ documents · Refund policies · Account recovery docs · Product docs · Troubleshooting guides
+**Potential knowledge sources:** FAQs · Refund policies · Account recovery docs · Product docs · Troubleshooting guides
 
 ```mermaid
 flowchart LR
@@ -306,16 +395,21 @@ flowchart LR
 </details>
 
 <details>
-<summary>🟡 <b>v6.0 – CrewAI Flow</b> (planned)</summary>
+<summary>🟣 <b>v4.0: CrewAI Flow &amp; Human Escalation</b> (planned)</summary>
 
 <br/>
 
-Move routing and orchestration into a structured **CrewAI Flow**: Triage → Router → Specialists → Resolution → QA.
+Move orchestration into a structured **CrewAI Flow**, and escalate to a human for:
+
+- High-risk security issues
+- Complex unresolved tickets
+- Tickets that still fail QA after the retry limit
+- Anything that needs human judgement
 
 </details>
 
 <details>
-<summary>🚀 <b>v7.0 – Production Application</b> (planned)</summary>
+<summary>🚀 <b>v5.0: Production Application</b> (planned)</summary>
 
 <br/>
 
@@ -324,25 +418,9 @@ flowchart LR
     A[⚛️ React Frontend] --> B[⚡ FastAPI Backend] --> C[🤝 CrewAI Workflow] --> D[🧰 Agents + Tools + RAG] --> E[(🐘 PostgreSQL)]
 ```
 
-**Potential additions:** Authentication · Ticket database · REST APIs · Docker · Testing · Cloud deployment · Monitoring
-
 </details>
 
----
-
-## 🔭 Long-term vision
-
-The goal is to grow SupportCrew AI from a multi-agent routing prototype into a complete **AI-powered customer support platform**.
-
-> 🚧 Everything below the v1.0 line is a **plan, not a feature that exists today.**
-
-```mermaid
-flowchart TD
-    A([Customer]) --> B[Ticket Intake] --> C[Triage] --> D[Priority] --> E[Routing]
-    E --> F[Specialist Agent] --> G[Tools + RAG] --> H[Resolution] --> I[🧪 QA Agent]
-    I -->|Approved| J([📨 Customer Response])
-    I -->|Escalate| K([🧑‍💼 Human Support])
-```
+> 🚧 Everything from v3.0 onward is a **plan, not a feature that exists today.**
 
 ---
 
@@ -351,8 +429,8 @@ flowchart TD
 This project doubles as a hands-on way of learning CrewAI, built one layer at a time:
 
 ```text
-Single Agent → Multiple Agents → Routing → Structured Outputs → QA
-      → Tools → RAG → Workflow Orchestration → Full Application
+Single Agent → Multiple Agents → Routing → Structured Outputs → QA + Feedback
+      → Tools + RAG → Workflow Orchestration → Full Application
 ```
 
 Each version marks a new stage of understanding and implementation.
@@ -375,7 +453,7 @@ Each version marks a new stage of understanding and implementation.
 
 <br/>
 
-**Current version: v1.0** · 🚧 Actively being developed
+**Current version: v2.0** · 🚧 Actively being developed
 
 ⭐ *If you find this project interesting, consider giving it a star!*
 
