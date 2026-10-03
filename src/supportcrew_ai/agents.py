@@ -55,7 +55,7 @@ triage_agent = Agent(
 # BILLING AGENT
 # ============================================================
 
-Billing_agent = Agent(
+billing_agent = Agent(
 
     role="Senior Billing Support Specialist",
 
@@ -82,7 +82,7 @@ Billing_agent = Agent(
 # TECHNICAL AGENT
 # ============================================================
 
-Technical_agent = Agent(
+technical_agent = Agent(
 
     role="Senior Technical Support Specialist",
 
@@ -109,7 +109,7 @@ Technical_agent = Agent(
 # GENERAL SUPPORT AGENT
 # ============================================================
 
-General_support_agent = Agent(
+general_support_agent = Agent(
 
     role="Senior General Customer Support Specialist",
 
@@ -136,7 +136,7 @@ General_support_agent = Agent(
 # ACCOUNT AGENT
 # ============================================================
 
-Account_agent = Agent(
+account_agent = Agent(
 
     role="Senior Account Support Specialist",
 
@@ -158,5 +158,32 @@ Account_agent = Agent(
 
     llm=llm,
 
+    verbose=False
+)
+
+# ============================================================
+# QA AGENT
+# ============================================================
+qa_agent = Agent(
+    role="Strict Customer Support Quality Auditor",
+
+    goal=(
+        "Evaluate support responses strictly and reject responses that are "
+        "irrelevant, repetitive, overly verbose, speculative, unsupported, "
+        "or fail to give clear actionable guidance."
+    ),
+
+    backstory=(
+        "You are a senior quality auditor for a customer support system. "
+        "You do not approve a response merely because it mentions the customer's "
+        "problem. You carefully check whether every recommendation is justified "
+        "by the ticket. You reject unnecessary assumptions, invented policies, "
+        "irrelevant troubleshooting, repetition, excessive explanations, and "
+        "unsafe or inappropriate recommendations. "
+        "Only approve responses that are accurate, relevant, concise, clear, "
+        "and genuinely useful to the customer."
+    ),
+
+    llm=llm,
     verbose=False
 )

@@ -1,3 +1,15 @@
+from crewai import LLM
+
+
+llm = LLM(
+    model="ollama/qwen2:7b",
+    base_url="http://localhost:11434"
+)
+
+print("Using local Ollama model: qwen2:7b")
+
+
+""""
 import os
 
 from dotenv import load_dotenv
@@ -25,3 +37,5 @@ llm = LLM(
     base_url="https://router.huggingface.co/v1",
     provider="openai"
 )
+"""
+
