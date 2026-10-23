@@ -1,10 +1,8 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=240&section=header&text=SupportCrew%20AI&fontSize=66&fontColor=ffffff&fontAlignY=38&desc=A%20Multi-Agent%20Customer%20Support%20%26%20Ticket%20Resolution%20System&descAlignY=60&descSize=18&animation=fadeIn" alt="SupportCrew AI banner" width="100%"/>
+<img src="docs/banner.svg" alt="SupportCrew AI banner" width="100%"/>
 
-<a href="https://github.com/Mahee0117/Ticket_resolver_crewai">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1200&color=8B5CF6&center=true&vCenter=true&width=760&lines=Triage+%E2%86%92+Route+%E2%86%92+Tools+%2B+RAG+%E2%86%92+QA;Specialized+agents%2C+one+support+workflow;Local+LLM+%7C+ChromaDB+%7C+Streamlit" alt="Typing animation" />
-</a>
+<img src="docs/tagline.svg" alt="Triage, route, tools and RAG, QA" width="640"/>
 
 <br/>
 
@@ -472,6 +470,6 @@ This project demonstrates practical experience with:
 
 <sub>Built to explore reliable, tool-assisted and knowledge-grounded AI support workflows.</sub>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=110&section=footer" alt="footer" width="100%"/>
+<img src="docs/footer.svg" alt="footer" width="100%"/>
 
 </div>
