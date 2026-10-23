@@ -103,3 +103,20 @@ def search_knowledge_base(query: str, top_k: int = 2) -> list[str]:
     )
 
     return results["documents"][0] if results["documents"] else []
+
+def ensure_knowledge_base():
+    """Build the knowledge base if it doesn't exist yet."""
+    client = chromadb.PersistentClient(path=str(CHROMA_PATH))
+
+    try:
+        collection = client.get_collection(COLLECTION_NAME)
+
+        if collection.count() > 0:
+            print("Knowledge base already initialized.")
+            return
+
+    except Exception:
+        pass
+
+    print("Initializing support knowledge base...")
+    build_knowledge_base()
