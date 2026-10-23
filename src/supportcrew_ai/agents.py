@@ -2,7 +2,9 @@ from crewai import Agent
 
 from supportcrew_ai.config import llm
 
+from supportcrew_ai.tools import get_customer, get_order_status
 
+from supportcrew_ai.rag.tool import search_support_knowledge
 # ============================================================
 # TRIAGE AGENT
 # ============================================================
@@ -73,7 +75,7 @@ billing_agent = Agent(
     """,
 
     llm=llm,
-
+    tools=[get_order_status, search_support_knowledge],
     verbose=False
 )
 
@@ -83,26 +85,31 @@ billing_agent = Agent(
 # ============================================================
 
 technical_agent = Agent(
-
     role="Senior Technical Support Specialist",
 
-    goal="""
-    Diagnose and resolve customer issues involving
-    application bugs, crashes, errors, and technical failures.
-    """,
+    goal=(
+        "Resolve technical support tickets using the support knowledge "
+        "base as the primary source of product-specific guidance. "
+        "Provide concise, evidence-based troubleshooting steps."
+    ),
 
-    backstory="""
-    You are an experienced technical support specialist.
+    backstory=(
+        "You are a careful technical support specialist. Before answering "
+        "a product-specific question, search the support knowledge base. "
+        "Use the retrieved documents as your source of truth. Do not add "
+        "troubleshooting steps, product behavior, or root causes that the "
+        "documents do not support. If the documentation is insufficient, "
+        "ask focused diagnostic questions or recommend escalation. "
+        "Clearly distinguish documented guidance from information still "
+        "needed to diagnose the issue."
+    ),
 
-    You analyze technical problems reported by customers,
-    identify the likely cause from the information provided,
-    and provide practical troubleshooting steps or a resolution.
-    """,
-
+    tools=[search_support_knowledge],
     llm=llm,
-
-    verbose=False
+    allow_delegation=False,
+    verbose=True,
 )
+
 
 
 # ============================================================
@@ -135,29 +142,19 @@ general_support_agent = Agent(
 # ============================================================
 # ACCOUNT AGENT
 # ============================================================
-
 account_agent = Agent(
-
-    role="Senior Account Support Specialist",
-
-    goal="""
-    Resolve customer issues related to account access,
-    passwords, login problems, profiles, and account security.
-    """,
-
-    backstory="""
-    You are an experienced account support specialist.
-
-    You handle login problems, password issues,
-    account access problems, profile issues,
-    and account security concerns.
-
-    You provide safe and clear guidance to customers
-    without requesting sensitive credentials.
-    """,
-
+    role="Account Support Specialist",
+    goal=(
+        "Resolve customer account issues using relevant customer information "
+        "and provide clear, helpful responses."
+    ),
+    backstory=(
+        "You specialize in account access and profile-related support. "
+        "When a ticket requires customer account information, use the "
+        "available customer lookup tool instead of guessing."
+    ),
+    tools=[get_customer, search_support_knowledge],
     llm=llm,
-
     verbose=False
 )
 

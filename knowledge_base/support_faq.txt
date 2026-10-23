@@ -1,0 +1,13 @@
+# SupportCrew AI — Support Knowledge Base
+
+## Password Reset
+If a customer cannot log in because they forgot their password, direct them to the password reset option on the login page. Ask them to check their spam or junk folder if the reset email does not arrive. If the email still does not arrive, escalate the issue to account support. Never ask the customer to share their password.
+
+## PDF Upload Errors
+If the application crashes when uploading a PDF, ask the customer which browser or application version they are using and whether the issue happens with other PDF files. Record the file size and any error message. Do not claim a root cause without evidence. If the issue persists, escalate it to technical support.
+
+## Order Delivery
+Use the order lookup tool to retrieve the current order status and expected delivery date. Only communicate information returned by the order record. If the order ID cannot be found, ask the customer to verify the ID. Never invent a delivery date.
+
+## Account Security
+If a customer reports unauthorized account access, advise them to secure their account by changing their password through the official account recovery process. If unauthorized financial transactions are reported, advise them to contact their bank or payment provider promptly and report the transactions through the platform's official support channel. Never request passwords, full card numbers, or authentication codes.

@@ -82,6 +82,12 @@ def create_billing_task(
         3. Provide a clear customer-friendly resolution.
 
         {feedback_section}
+        ORDER LOOKUP RULES:
+        - If the ticket asks about an order and provides an order ID,
+        use the get_order_status tool to retrieve its status.
+        - Base order-specific statements on the tool result.
+        - If the order is not found, clearly say so.
+        - Never invent order status or delivery dates.
         """,
 
         expected_output="""
@@ -98,13 +104,17 @@ def create_billing_task(
 # TECHNICAL TASK
 # ============================================================
 
+
+# ============================================================
+# TECHNICAL TASK
+# ============================================================
+
 def create_technical_task(
     ticket,
     agent,
     previous_response=None,
     qa_feedback=None
 ):
-
     feedback_section = ""
 
     if previous_response and qa_feedback:
@@ -115,31 +125,65 @@ def create_technical_task(
         QA FEEDBACK:
         {qa_feedback}
 
-        Improve the previous response based on the QA feedback.
+        Revise the previous response to address every QA issue.
+        Remove unsupported claims rather than merely rewording them.
         """
 
     return Task(
-
         description=f"""
         Analyze the following customer support ticket:
 
         {ticket}
 
-        Determine:
+        MANDATORY KNOWLEDGE BASE RULES:
 
-        1. What is the technical problem?
-        2. What could be causing the problem?
-        3. What troubleshooting steps should the customer follow?
-        4. Provide a clear resolution.
+        1. Before drafting the response, call the
+           search_support_knowledge tool with a query relevant
+           to the customer's technical issue.
+
+        2. Read the retrieved documentation and use it as the
+           source of truth for product-specific troubleshooting.
+
+        3. Recommend only troubleshooting steps explicitly
+           supported by the retrieved documentation.
+
+        4. Do not invent root causes, product behavior, software
+           updates, driver fixes, file-size limits, or other policies.
+
+        5. If the documentation does not identify the root cause,
+           explicitly state that the cause is not yet known.
+           Do not fill this gap with guesses.
+
+        6. If more information is needed, ask focused diagnostic
+           questions relevant to the issue.
+
+        7. If the documented steps have been tried and the issue
+           persists, recommend escalation to the appropriate
+           support team.
+
+        8. If the knowledge base does not contain enough information,
+           explain this limitation and ask for the information needed
+           to investigate. Do not invent a solution.
+
+        RESPONSE REQUIREMENTS:
+
+        - Explain the reported technical problem.
+        - State a possible cause only if the retrieved evidence
+          actually supports it. Otherwise say "Cause not yet determined."
+        - Provide only documented troubleshooting steps.
+        - Ask relevant diagnostic questions when necessary.
+        - Recommend escalation when appropriate.
+        - Keep the customer-facing response concise and professional.
 
         {feedback_section}
         """,
 
         expected_output="""
         Technical Problem:
-        Possible Cause:
+        Evidence-Based Cause:
         Troubleshooting:
-        Resolution:
+        Information Needed:
+        Resolution or Escalation:
         """,
 
         agent=agent
@@ -218,6 +262,13 @@ def create_account_task(
         {qa_feedback}
 
         Improve the previous response based on the QA feedback.
+
+        CUSTOMER LOOKUP RULES:
+        - If the ticket includes a customer ID, use the get_customer tool
+        to retrieve the record when customer details are relevant.
+        - Base customer-specific statements on the tool result.
+        - If the customer is not found, say the record could not be found.
+        - Never invent customer information.
         """
 
     return Task(
@@ -233,6 +284,13 @@ def create_account_task(
         2. What steps should the customer take?
         3. Is there any security concern?
         4. Provide a clear resolution.
+
+        ORDER LOOKUP RULES:
+        - If the ticket asks about an order and provides an order ID,
+        use the get_order_status tool to retrieve its status.
+        - Base order-specific statements on the tool result.
+        - If the order is not found, clearly say so.
+        - Never invent order status or delivery dates.
 
         {feedback_section}
         """,
@@ -251,10 +309,15 @@ def create_account_task(
 # ============================================================
 # QA TASK
 # ============================================================
+
+# ============================================================
+# QA TASK
+# ============================================================
+
 def create_qa_task(ticket, specialist_response, agent):
     return Task(
         description=f"""
-        Perform a strict quality review of the following customer support response.
+        You are a strict quality assurance reviewer for customer support.
 
         CUSTOMER TICKET:
         {ticket}
@@ -262,85 +325,81 @@ def create_qa_task(ticket, specialist_response, agent):
         SPECIALIST RESPONSE:
         {specialist_response}
 
-        Evaluate the response using ALL of these criteria.
+        Evaluate the response against the following criteria.
 
         1. DIRECTNESS
-        Does the response directly address what the customer asked?
+        Does it address the customer's actual problem?
 
         2. ACCURACY
-        Does the response avoid claims that cannot be supported by the ticket?
+        Are factual claims supported by the ticket, retrieved tools,
+        or available support documentation?
 
-        3. RELEVANCE
-        Is every major recommendation relevant to the customer's problem?
+        3. KNOWLEDGE BASE GROUNDING
+        For technical troubleshooting, check whether each
+        product-specific recommendation is supported by the retrieved
+        support documentation.
 
-        4. ACTIONABILITY
-        Does the response provide practical steps the customer can follow?
+        Reject unsupported recommendations, including invented
+        updates, driver fixes, file-size limits, root causes, or policies.
 
-        5. CONCISENESS
-        Is the response reasonably short for the customer's question?
+        4. SPECULATION
+        Reject guesses presented as established facts.
+        If the cause is unknown, the response must acknowledge this.
 
-        6. REPETITION
-        Does the response repeat the same information or resolution multiple times?
+        5. DIAGNOSTIC QUESTIONS
+        When information is insufficient, does the response ask
+        relevant questions needed to investigate the problem?
 
-        7. UNSUPPORTED ASSUMPTIONS
-        Does the response assume details that the customer never provided?
+        6. ESCALATION
+        When documented troubleshooting is insufficient or the issue
+        persists, does the response recommend appropriate escalation?
 
-        Examples:
-        - assuming a specific operating system
-        - assuming a specific application
-        - assuming a specific company policy
-        - inventing available account features
-        - recommending another email address without justification
+        7. RELEVANCE AND ACTIONABILITY
+        Are the recommendations relevant and useful to this customer?
 
-        8. SPECULATION
-        Does the response present guesses or possible causes as if they were
-        confirmed facts?
-
-        9. CUSTOMER SAFETY
+        8. CUSTOMER SAFETY
         Does the response avoid unnecessary or potentially harmful advice?
 
-        10. PROFESSIONAL QUALITY
-        Is the response clear, professional, understandable, and appropriate
-        for a customer?
+        9. CLARITY AND CONCISENESS
+        Is the response professional, understandable, and free of
+        unnecessary repetition?
 
-        STRICT APPROVAL RULE:
+        STRICT APPROVAL RULES:
 
-        APPROVE the response only when it is genuinely high quality.
+        Set approved=False if ANY significant issue exists, especially:
 
-        REJECT the response if there is a significant problem in any of these
-        areas, especially:
+        - A technical recommendation is not supported by the retrieved
+          documentation.
+        - A possible cause is presented as confirmed without evidence.
+        - The response invents product behavior or company policy.
+        - Necessary diagnostic information is missing.
+        - Required escalation is omitted.
+        - The response ignores previous QA feedback.
 
-        - unsupported recommendations
-        - irrelevant troubleshooting
-        - repeated information
-        - excessive verbosity
-        - speculative claims
-        - missing important actions
-        - assumptions not supported by the ticket
+        Do not approve a response merely because it sounds confident,
+        contains many steps, or is well written.
 
-        IMPORTANT:
+        If the response contains unsupported technical advice, reject it
+        even if its other sections are good.
 
-        Do NOT approve a response simply because it is long or contains many
-        troubleshooting steps.
+        If the knowledge base is insufficient, the specialist should
+        acknowledge the limitation rather than invent a resolution.
 
-        A short and directly useful response is better than a long response
-        containing unnecessary information.
+        If rejected, give specific, actionable feedback identifying
+        the unsupported claims and explaining what to remove or change.
 
-        If the response is rejected, provide specific feedback that tells the
-        specialist exactly what needs to be changed.
+        Approve only when the response meets the relevant criteria.
         """,
 
         expected_output="""
-        Return a structured QA result.
+        Return a structured QA result matching the QAResult schema.
 
         approved:
         true or false
 
         feedback:
-        Explain why the response was approved.
-
-        If rejected, identify the specific problems and explain how the
-        specialist should improve the response.
+        Explain why the response passes the quality criteria.
+        If rejected, identify specific issues and required corrections.
         """,
 
         agent=agent,
